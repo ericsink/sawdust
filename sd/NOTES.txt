@@ -1,0 +1,9 @@
+
+1.  A face is always a 2D polygon, with all its vertices in the same plane.
+
+2.  The front of a face is counterclockwise.
+
+3.  A hole is clockwise.
+
+4.  The coord system is right-handed (like OpenGL and WPF)
+

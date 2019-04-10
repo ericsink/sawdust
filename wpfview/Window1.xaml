@@ -1,0 +1,230 @@
+﻿<Window x:Class="wpfview.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="clr-namespace:SortableWPFGridView"
+    Title="Sawdust" Height="1000" Width="1400" Activated="OnActivated_MainWindow" Loaded="OnLoaded_MainWindow"
+>
+  <Window.Resources>
+    <DataTemplate x:Key="HeaderTemplateArrowUp">
+      <DockPanel>
+        <TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
+        <Path x:Name="arrow"
+           StrokeThickness = "1"
+           Fill = "Gray"
+           Data = "M 5,10 L 15,10 L 10,5 L 5,10"/>
+      </DockPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="HeaderTemplateArrowDown">
+      <DockPanel>
+        <TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
+        <Path x:Name="arrow"
+              StrokeThickness = "1"
+              Fill = "Gray"
+              Data = "M 5,5 L 10,10 L 15,5 L 5,5"/>
+      </DockPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="HeaderTemplateTransparent">
+      <DockPanel>
+        <TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
+        <Path x:Name="arrow"
+              StrokeThickness = "1"
+              Fill = "Transparent"
+              Data = "M 5,5 L 10,10 L 15,5 L 5,5"/>
+      </DockPanel>
+    </DataTemplate>
+
+  </Window.Resources>
+  <Grid>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="300"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="300"/>
+    </Grid.ColumnDefinitions>
+
+    <Grid Grid.Row="0" Grid.Column="0"  >
+      <Grid.RowDefinitions>
+        <RowDefinition Height="5*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="3*"/>
+      </Grid.RowDefinitions>
+
+      <Grid Grid.Row="0" Grid.Column="0" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Background="LightGray" Grid.Row="0" Grid.Column="0" FontSize="16" FontFamily="Arial" ToolTip="The list below shows each step of the plan.  Click on any step to select it for display in the center pane of the main window." >Steps:</Label>
+        <ComboBox Name="cbSteps" Grid.Row="1" Grid.Column="0" SelectionChanged="cbSteps_SelectionChanged" ToolTip="This control allows you to select which steps appear in the step list below." ></ComboBox>
+        <ListView Name="mySteps" Grid.Row="2" Grid.Column="0"  SelectionChanged="mySteps_SelectionChanged" ToolTip="This list shows each step of the plan.  Click on any step to select it for display in the center pane of the main window."/>
+      </Grid>
+
+      <GridSplitter Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" />
+
+      <Grid Grid.Row="2" Grid.Column="0" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label FontSize="16" FontFamily="Arial" Background="LightGray" Grid.Row="0" Grid.Column="0" ToolTip="Variables below can be manipulated to change certain aspects of the plan" >Variables:</Label>
+        <Grid Grid.Row="1" Grid.Column="0" >
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <Button Name="CancelVarChange" IsEnabled="False" Grid.Row="0" Grid.Column="0" Click="OnCancelVarChange" >Cancel</Button>
+          <Button Name="ApplyVarChange" IsEnabled="False" Grid.Row="0" Grid.Column="1" Click="OnApplyVarChange" >Apply</Button>
+        </Grid>
+          <TabControl Name="myVariables" Grid.Row="2" Grid.Column="0" TabStripPlacement="Top" >
+          </TabControl>
+        </Grid>
+    </Grid>
+
+    <GridSplitter Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5"/>
+
+    <Grid Grid.Row="0" Grid.Column="2"  >
+      <Grid.Background>
+        <SolidColorBrush Color="Tan"></SolidColorBrush>
+      </Grid.Background>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Label Name="myTitle" Background="LightGray" Grid.Row="0" Grid.Column="0" FontSize="16" FontFamily="Arial" ></Label>
+      <ToolBarTray Grid.Row="1" Grid.Column="0" >
+        <ToolBar  Band="1">
+          <Button Click="OnClick_CopyImage" >Copy Image</Button>
+          <Button Click="OnClick_CopyXAML" >Copy XAML</Button>
+          <Button Click="OnClick_Print">Print...</Button>
+        </ToolBar>
+        <ToolBar  Band="1">
+          <Button Click="OnClick_Fit" >Fit</Button>
+        </ToolBar>
+        <ToolBar Name="tbAnimate"  Band="1">
+          <Button Name="StopButton" Click="OnClick_Stop" ToolTip="Stop the animation">Stop</Button>
+          <Button Name="GoButton" Click="OnClick_Go" ToolTip="Start the animation">Go</Button>
+          <Slider Name="mySlider" Width="120" ValueChanged="Slider_Changed"  Minimum="0" Maximum="10" ToolTip="Drag this to control the animation"></Slider>
+        </ToolBar>
+        <ToolBar  Band="1">
+          <CheckBox Checked="Endgrain_Checked" Unchecked="Endgrain_Unchecked" IsChecked="True" ToolTip="When this checkbox is turned on, endgrain is highlighted in yellow, and ugly plywood edges are highlighted in red.">Endgrain</CheckBox>
+          <CheckBox Checked="Highlights_Checked" Unchecked="Highlights_Unchecked" IsChecked="True" ToolTip="When this checkbox is turned on, faces for this step are highlighted.">Highlights</CheckBox>
+          <CheckBox Checked="Annotations_Checked" Unchecked="Annotations_Unchecked" IsChecked="True" ToolTip="Show annotations or not">Annotations</CheckBox>
+          <CheckBox Checked="FaceLabels_Checked" Unchecked="FaceLabels_Unchecked" IsChecked="True" ToolTip="Show Face Labels or not">Face Labels</CheckBox>
+          <CheckBox Checked="EdgeLines_Checked" Unchecked="EdgeLines_Unchecked" IsChecked="True" ToolTip="Show Edge Lines or not">Edge Lines</CheckBox>
+        </ToolBar>
+        <ToolBar  Band="1">
+          <Button Name="btn_Transparent" IsEnabled="False" Click="OnClick_Transparent">Make Transparent</Button>
+          <Button Name="btn_Opaque" IsEnabled="False" Click="OnClick_Opaque">Make Opaque</Button>
+        </ToolBar>
+        <ToolBar  Band="1">
+          <Button Click="OnClick_Document" ToolTip="Save this plan as a printable document" >Save Document...</Button>
+        </ToolBar>
+      </ToolBarTray>
+      <DockPanel Grid.Row="2" Grid.Column="0" Margin="20" >
+        <!-- Sliders for rotating camera -->
+        <TextBlock Name="label_slider_zoom" TextAlignment="Center" DockPanel.Dock="Left">
+          Zoom
+          <TextBlock.LayoutTransform>
+            <RotateTransform Angle="-90" />
+          </TextBlock.LayoutTransform>
+        </TextBlock>
+        <Slider Name="slider_zoom"
+                 Orientation="Vertical" Minimum="0.2" Maximum="10" ValueChanged="slider_zoom_changed" SmallChange="0.2" LargeChange="1"/>
+        <TextBlock Name="label_slider_x" TextAlignment="Center" DockPanel.Dock="Right">
+          X Rotation
+          <TextBlock.LayoutTransform>
+            <RotateTransform Angle="90" />
+          </TextBlock.LayoutTransform>
+        </TextBlock>
+        <Slider Name="slider_x" DockPanel.Dock="Right"
+                   Orientation="Vertical" Minimum="-180" Maximum="180" ValueChanged="slider_x_changed" SmallChange="1" LargeChange="22.5" ToolTip="Rotate around the X axis" />
+        <TextBlock Name="label_slider_z" DockPanel.Dock="Top" TextAlignment="Center">Z Rotation</TextBlock>
+        <Slider Name="slider_z" DockPanel.Dock="Top"
+                   Orientation="Horizontal" Minimum="-180" Maximum="180" ValueChanged="slider_z_changed" SmallChange="1" LargeChange="22.5" ToolTip="Rotate around the Z axis"/>
+        <TextBlock Name="label_slider_y" DockPanel.Dock="Bottom" TextAlignment="Center">Y Rotation</TextBlock>
+        <Slider Name="slider_y" DockPanel.Dock="Bottom"
+                     Orientation="Horizontal" Minimum="-180" Maximum="180" ValueChanged="slider_y_changed" SmallChange="1" LargeChange="22.5" ToolTip="Rotate around the Y axis" />
+
+        <Grid Name="vpgrid" >
+          <Viewport3D Name="myVP" SizeChanged="OnSizeChanged_Viewport" Grid.Row="0" Grid.Column="0" />
+          <Canvas Name="Overlay" Background="Transparent" Grid.Row="0" Grid.Column="0" MouseUp="OnViewportMouseUp" MouseDown="OnViewportMouseDown" MouseMove="OnViewportMouseMove" >
+          <TextBlock Name="myInstructions" Width="300" TextWrapping="WrapWithOverflow" />
+            
+          </Canvas>
+        </Grid>
+      </DockPanel>
+      <StatusBar Grid.Row="3" Grid.Column="0" >
+        <StatusBarItem HorizontalAlignment="Left" Width="120" Name="myWeightInfo" ToolTip="The approximate weight of the piece shown above" />
+        <StatusBarItem HorizontalAlignment="Right" Width="300" Name="myHoverFaceInfo" ToolTip="When you use your mouse to hover over a face in the picture above, the name of that face will be shown here" />
+      </StatusBar>
+    </Grid>
+
+    <GridSplitter Grid.Row="0" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5"/>
+
+    <Grid Grid.Row="0" Grid.Column="4" >
+      <Grid.RowDefinitions>
+        <RowDefinition Height="2*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="2*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="1*"/>
+      </Grid.RowDefinitions>
+
+      <Grid Grid.Row="0" Grid.Column="0" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Background="LightGray" Grid.Row="0" Grid.Column="0" FontSize="16" FontFamily="Arial" ToolTip="The text below contains additional notes about the current step, provided by the author of this plan." >Designer's Notes:</Label>
+        <FlowDocumentScrollViewer Name="myNotes" Grid.Row="1" Grid.Column="0">
+          
+        </FlowDocumentScrollViewer>
+      </Grid>
+
+      <GridSplitter Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="5"/>
+
+      <Grid Grid.Row="2" Grid.Column="0" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Background="LightGray" Grid.Row="0" Grid.Column="0" FontSize="16" FontFamily="Arial" ToolTip="The list below shows the individual boards which appear in the current step." >Boards:</Label>
+        <!--
+        <ListView Name="myPieces" Grid.Row="1" Grid.Column="0" SelectionChanged="OnSelectionChanged_Pieces" />
+        -->
+        <s:SortableListView SelectionChanged="OnSelectionChanged_Pieces" Grid.Row="1" Grid.Column="0"    x:Name="myPieces" IsSynchronizedWithCurrentItem="True"                               
+                               ColumnHeaderSortedAscendingTemplate="HeaderTemplateArrowUp" ColumnHeaderSortedDescendingTemplate="HeaderTemplateArrowDown" ColumnHeaderNotSortedTemplate="HeaderTemplateTransparent">
+          <ListView.View>
+            <GridView>
+              <s:SortableGridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" SortPropertyName="Name" />
+              <s:SortableGridViewColumn Header="Material" DisplayMemberBinding="{Binding Material}" SortPropertyName="Material" />
+              <s:SortableGridViewColumn Header="Size" DisplayMemberBinding="{Binding Dimensions}" SortPropertyName="Dimensions" />
+            </GridView>
+          </ListView.View>
+        </s:SortableListView>
+
+      </Grid>
+
+      <!--
+      <GridSplitter Grid.Row="3" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="5"/>
+
+      <Grid Grid.Row="4" Grid.Column="0" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label FontSize="16" FontFamily="Arial" Background="LightGray" Grid.Row="0" Grid.Column="0" ToolTip="Below, you will find hyperlinks to articles providing additional information related to the currently selected step" >Help:</Label>
+        <ListView Name="MyLinks" Grid.Row="1" Grid.Column="0" />
+      </Grid>
+      -->
+      
+    </Grid>
+  </Grid>
+</Window>
